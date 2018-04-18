@@ -1,11 +1,17 @@
 onEvent("CityInput","change",function(){
   console.log(getText("CityInput"));
+  getWeather();
+  
+});
+
+function getWeather(city){
   var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + getText("CityInput") + '")');
   var url = "https://query.yahooapis.com/v1/public/yql?q=" + query+"&format=json"; 
   startWebRequest(url, function(status, type, content) {
     var jsonData = JSON.parse(content);
-    var windChill = jsonData.query.results.channel.wind.chill
-    console.log(windChill);
-    setText("windChillLabel","Wind Chill: " + windChill);
+    console.log(jsonData.query.results.channel.item.condition.temp);
+    var temperature = jsonData.query.results.channel.item.condition.temp;
+    console.log(temperature);
+    setText("windChillLabel","It is currently " + temperature + "°F outside");
   });
-});
+};
