@@ -1,5 +1,6 @@
-onEvent("citySelector","change",function(){
-  var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="60605")');
+onEvent("CityInput","change",function(){
+  console.log(getText("CityInput"));
+  var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + getText("CityInput") + '")');
   var url = "https://query.yahooapis.com/v1/public/yql?q=" + query+"&format=json"; 
   startWebRequest(url, function(status, type, content) {
     var jsonData = JSON.parse(content);
