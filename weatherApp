@@ -1,17 +1,31 @@
+var temperature,windSpeed,windDirection,windChill,sunrise,sunset,high,low,condition;
 onEvent("CityInput","change",function(){
   console.log(getText("CityInput"));
-  getWeather();
+  getWeather(getText("CityInput"));
   
 });
 
 function getWeather(city){
-  var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + getText("CityInput") + '")');
+  var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + city + '")');
   var url = "https://query.yahooapis.com/v1/public/yql?q=" + query+"&format=json"; 
   startWebRequest(url, function(status, type, content) {
     var jsonData = JSON.parse(content);
-    console.log(jsonData.query.results.channel.item.condition.temp);
-    var temperature = jsonData.query.results.channel.item.condition.temp;
+    //console.log(jsonData);
+    parseJSON(jsonData);
     console.log(temperature);
     setText("windChillLabel","It is currently " + temperature + "°F outside");
+    setText("condition",condition);
   });
-};
+}
+
+function parseJSON(jsonData){
+  temperature = jsonData.query.results.channel.item.condition.temp;
+  windSpeed = jsonData.query.results.channel.wind.speed;
+  windDirection = jsonData.query.results.channel.wind.direction;
+  windChill = jsonData.query.results.channel.wind.chill;
+  sunrise = jsonData.query.results.channel.astronomy.sunrise;
+  sunset = jsonData.query.results.channel.astronomy.sunset;
+  high = jsonData.query.results.channel.item.forecast.high;
+  low = jsonData.query.results.channel.item.forecast.low;
+  condition = jsonData.query.results.channel.item.condition.text;
+}
