@@ -1,21 +1,97 @@
-var temperature,windSpeed,windDirection,windChill,sunrise,sunset,high,low,condition;
+var temperature = "";
+var windSpeed = "";
+var windDirection = "";
+var windChill = "";
+var sunrise = "";
+var sunset = "";
+var high = "";
+var low = "";
+var condition = "";
+
 onEvent("CityInput","change",function(){
   console.log(getText("CityInput"));
   getWeather(getText("CityInput"));
-  
 });
 
 function getWeather(city){
   var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + city + '")');
   var url = "https://query.yahooapis.com/v1/public/yql?q=" + query+"&format=json"; 
-  startWebRequest(url, function(status, type, content) {
-    var jsonData = JSON.parse(content);
-    //console.log(jsonData);
-    parseJSON(jsonData);
-    console.log(temperature);
-    setText("windChillLabel","It is currently " + temperature + "°F outside");
-    setText("condition",condition);
-  });
+  try{
+    startWebRequest(url, function(status, type, content) {
+      var jsonData = JSON.parse(content);
+      //console.log(jsonData);
+      parseJSON(jsonData);
+      console.log(temperature);
+      setText("windChillLabel","It is currently " + temperature + "°F outside");
+      setText("conditionLabel",condition);
+      setText("tempLabel",temperature + "°F");
+      setWeatherIcon(condition);
+      showElement("todaysForecastLabel");
+    });
+  } catch(SyntaxError){}
+}
+
+function setWeatherIcon(condition){
+  switch(condition.toLowerCase()){
+                case "partly cloudy":
+                  setIcon("partlyCloudyImage");
+                  break;
+                case "mostly cloudy":
+                  setIcon("partlyCloudyImage");
+                  break;
+                case "breezy":
+                  setIcon("sunnyImage");
+                  break;
+                case "foggy":
+                  setIcon("foggyImage");
+                  break;
+                case "showers":
+                  setIcon("rainImage");
+                  break;
+                case "drizzle":
+                  setIcon("littleRainImage");
+                  break;
+                case "cloudy":
+                  setIcon("cloudyImage");
+                  break;
+                case "sleet":
+                  setIcon("sleetImage");
+                  break;
+                case "flurries":
+                  setIcon("snowImage");
+                  break;
+                case "snow showers":
+                  setIcon("snowImage");
+                  break;
+                case "snow":
+                  setIcon("snowImage");
+                  break;
+                case "isolated thunderstorms":
+                  setIcon("stormImage");
+                  break;
+                case "scattered thunderstorms":
+                  setIcon("stormImage");
+                  break;
+                case "isolated thundershowers":
+                  setIcon("stormImage");
+                  break;
+                default:
+                  setIcon("sunnyImage");
+                  break;
+  }
+}
+
+function setIcon(icon){
+  hideElement("foggyImage");
+  hideElement("cloudyImage");
+  hideElement("littleRainImage");
+  hideElement("partlyCloudyImage");
+  hideElement("rainImage");
+  hideElement("sleetImage");
+  hideElement("snowImage");
+  hideElement("stormImage");
+  hideElement("sunnyImage");
+  showElement(icon);
 }
 
 function parseJSON(jsonData){
