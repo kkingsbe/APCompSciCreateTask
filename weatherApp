@@ -9,13 +9,24 @@ var low = "";
 var condition = "";
 var todaysHigh = "";
 var todaysLow = "";
+var tomorrowsHigh = "";
+var tomorrowsLow = "";
+var tomorrowsCondition = "";
 
 blankLabels();
+setScreen("mainScreen");
 
 onEvent("CityInput","change",function(){
   console.log(getText("CityInput"));
   getWeather(getText("CityInput"));
   setWeatherIcon(condition);
+  updateLabels();
+  showElement("nextDayButton");
+});
+
+onEvent("nextDayButton","click",function(){
+  setScreen("forecastScreen1");
+  setTomorrrowsWeatherIcon(tomorrowsCondition);
   updateLabels();
 });
 
@@ -28,6 +39,7 @@ function updateLabels(){
   setText("sunsetLabel","Sunset: " + sunset);
   showElement("CurrentWeatherLabel");
   showElement("laterTodayLabel");
+  setText("tomorrowTemp",tomorrowsHigh);
 }
 
 function getWeather(city){
@@ -49,6 +61,58 @@ function blankLabels() {
   setText("todaysLowLabel","");
   setText("windspeedLabel","");
   setText("sunsetLabel","");
+  setText("tomorrowTemp","");
+  setText("tomorrowsConditionLabel","");
+}
+
+function setTomorrrowsWeatherIcon(condition){
+  switch(condition.toLowerCase()){
+                case "partly cloudy":
+                  setTomorrrowsIcon("tomorrowPartlyCloudy");
+                  break;
+                case "mostly cloudy":
+                  setTomorrrowsIcon("tomorrowPartlyCloudy");
+                  break;
+                case "breezy":
+                  setTomorrrowsIcon("tomorrowSunny");
+                  break;
+                case "foggy":
+                  setTomorrrowsIcon("tomorrowFoggy");
+                  break;
+                case "showers":
+                  setTomorrrowsIcon("tomorrowRain");
+                  break;
+                case "drizzle":
+                  setTomorrrowsIcon("tomorrowLittleRain");
+                  break;
+                case "cloudy":
+                  setTomorrrowsIcon("tomorrowCloudy");
+                  break;
+                case "sleet":
+                  setTomorrrowsIcon("tomorrowSleet");
+                  break;
+                case "flurries":
+                  setTomorrrowsIcon("tomorrowSnow");
+                  break;
+                case "snow showers":
+                  setTomorrrowsIcon("tomorrowSnow");
+                  break;
+                case "snow":
+                  setTomorrrowsIcon("tomorrowSnow");
+                  break;
+                case "isolated thunderstorms":
+                  setTomorrrowsIcon("tomorrowStorm");
+                  break;
+                case "scattered thunderstorms":
+                  setTomorrrowsIcon("tomorrowStorm");
+                  break;
+                case "isolated thundershowers":
+                  setTomorrrowsIcon("tomorrowStorm");
+                  break;
+                default:
+                  setTomorrrowsIcon("tomorrowSunny");
+                  break;
+  }
 }
 
 function setWeatherIcon(condition){
@@ -114,6 +178,19 @@ function setIcon(icon){
   showElement(icon);
 }
 
+function setTomorrrowsIcon(icon){
+  hideElement("tomorrowFoggy");
+  hideElement("tomorrowCloudy");
+  hideElement("tomorrowLittleRain");
+  hideElement("tomorrowPartlyCloudy");
+  hideElement("tomorrowRain");
+  hideElement("tomorrowSleet");
+  hideElement("tomorrowSnow");
+  hideElement("tomorrowStorm");
+  hideElement("tomorrowSunny");
+  showElement(icon);
+}
+
 function parseJSON(jsonData){
   temperature =   jsonData.query.results.channel.item.condition.temp;
   windSpeed =     jsonData.query.results.channel.wind.speed;
@@ -127,6 +204,10 @@ function parseJSON(jsonData){
   todaysHigh =    //jsonData.query.results.channel.item.forecast.split("{")[0].split(",")[3].split(":")[1].split("\"")[3];
   todaysHigh = String(jsonData.query.results.channel.item.forecast[0].high);
   todaysLow = String(jsonData.query.results.channel.item.forecast[0].low);
-  console.log(todaysHigh);
-  console.log(todaysLow);
+  tomorrowsHigh = String(jsonData.query.results.channel.item.forecast[1].high);
+  tomorrowsLow = String(jsonData.query.results.channel.item.forecast[1].low);
+  tomorrowsCondition = String(jsonData.query.results.channel.item.forecast[1].text);
+  console.log("High: " + todaysHigh);
+  console.log("Low: " + todaysLow);
+  console.log("Condition: " + condition);
 }
