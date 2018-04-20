@@ -22,7 +22,10 @@ onEvent("CityInput","change",function(){
 function updateLabels(){
   setText("conditionLabel",condition);
   setText("tempLabel",temperature + "°F");
-  setText("todaysHighLabel",todaysHigh);
+  setText("todaysHighLabel","High: " + todaysHigh + "°F");
+  setText("todaysLowLabel","Low: " + todaysLow + "°F");
+  setText("windspeedLabel","Wind: " + windSpeed + "MPH");
+  setText("sunsetLabel","Sunset: " + sunset);
   showElement("CurrentWeatherLabel");
   showElement("laterTodayLabel");
 }
@@ -44,6 +47,8 @@ function blankLabels() {
   setText("conditionLabel","");
   setText("todaysHighLabel","");
   setText("todaysLowLabel","");
+  setText("windspeedLabel","");
+  setText("sunsetLabel","");
 }
 
 function setWeatherIcon(condition){
