@@ -7,11 +7,25 @@ var sunset = "";
 var high = "";
 var low = "";
 var condition = "";
+var todaysHigh = "";
+var todaysLow = "";
+
+blankLabels();
 
 onEvent("CityInput","change",function(){
   console.log(getText("CityInput"));
   getWeather(getText("CityInput"));
+  setWeatherIcon(condition);
+  updateLabels();
 });
+
+function updateLabels(){
+  setText("conditionLabel",condition);
+  setText("tempLabel",temperature + "°F");
+  setText("todaysHighLabel",todaysHigh);
+  showElement("CurrentWeatherLabel");
+  showElement("laterTodayLabel");
+}
 
 function getWeather(city){
   var query = encodeURI('select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + city + '")');
@@ -22,13 +36,14 @@ function getWeather(city){
       //console.log(jsonData);
       parseJSON(jsonData);
       console.log(temperature);
-      setText("windChillLabel","It is currently " + temperature + "°F outside");
-      setText("conditionLabel",condition);
-      setText("tempLabel",temperature + "°F");
-      setWeatherIcon(condition);
-      showElement("todaysForecastLabel");
     });
   } catch(SyntaxError){}
+}
+
+function blankLabels() {
+  setText("conditionLabel","");
+  setText("todaysHighLabel","");
+  setText("todaysLowLabel","");
 }
 
 function setWeatherIcon(condition){
@@ -95,13 +110,18 @@ function setIcon(icon){
 }
 
 function parseJSON(jsonData){
-  temperature = jsonData.query.results.channel.item.condition.temp;
-  windSpeed = jsonData.query.results.channel.wind.speed;
+  temperature =   jsonData.query.results.channel.item.condition.temp;
+  windSpeed =     jsonData.query.results.channel.wind.speed;
   windDirection = jsonData.query.results.channel.wind.direction;
-  windChill = jsonData.query.results.channel.wind.chill;
-  sunrise = jsonData.query.results.channel.astronomy.sunrise;
-  sunset = jsonData.query.results.channel.astronomy.sunset;
-  high = jsonData.query.results.channel.item.forecast.high;
-  low = jsonData.query.results.channel.item.forecast.low;
-  condition = jsonData.query.results.channel.item.condition.text;
+  windChill =     jsonData.query.results.channel.wind.chill;
+  sunrise =       jsonData.query.results.channel.astronomy.sunrise;
+  sunset =        jsonData.query.results.channel.astronomy.sunset;
+  high =          jsonData.query.results.channel.item.forecast.high;
+  low =           jsonData.query.results.channel.item.forecast.low;
+  condition =     jsonData.query.results.channel.item.condition.text;
+  todaysHigh =    //jsonData.query.results.channel.item.forecast.split("{")[0].split(",")[3].split(":")[1].split("\"")[3];
+  todaysHigh = String(jsonData.query.results.channel.item.forecast[0].high);
+  todaysLow = String(jsonData.query.results.channel.item.forecast[0].low);
+  console.log(todaysHigh);
+  console.log(todaysLow);
 }
