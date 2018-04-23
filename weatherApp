@@ -21,6 +21,8 @@ onEvent("CityInput","change",function(){
   getWeather(getText("CityInput"));
   setWeatherIcon(condition);
   updateLabels();
+  setScreen("forecastScreen1");
+  setScreen("mainScreen");
   showElement("nextDayButton");
 });
 
@@ -30,6 +32,9 @@ onEvent("nextDayButton","click",function(){
   updateLabels();
 });
 
+onEvent("todayButton","click",function(){
+  setScreen("mainScreen");
+})
 function updateLabels(){
   setText("conditionLabel",condition);
   setText("tempLabel",temperature + "°F");
@@ -39,7 +44,10 @@ function updateLabels(){
   setText("sunsetLabel","Sunset: " + sunset);
   showElement("CurrentWeatherLabel");
   showElement("laterTodayLabel");
-  setText("tomorrowTemp",tomorrowsHigh);
+  setText("tomorrowTemp",tomorrowsHigh + "°F");
+  setText("tomorrowsConditionLabel",tomorrowsCondition);
+  setText("tomorrowsHighLabel","High: " + tomorrowsHigh + "°F");
+  setText("tomorrowsLowLabel","Low " + tomorrowsLow + "°F");
 }
 
 function getWeather(city){
